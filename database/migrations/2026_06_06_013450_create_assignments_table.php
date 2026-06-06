@@ -9,14 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('assignments', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
-
+public function up(): void
+{
+    Schema::create('assignments', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('lesson_id')->constrained('lessons')->cascadeOnDelete();
+        $table->string('title');
+        $table->text('description')->nullable();
+        $table->date('due_date')->nullable();
+        $table->integer('max_score')->default(100);
+        $table->boolean('active')->default(true);
+        $table->timestamps();
+    });
+}
     /**
      * Reverse the migrations.
      */
