@@ -6,5 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    //
+    protected $fillable = [
+    'instructor_id',
+    'title',
+    'slug',
+    'description',
+    'cover_image',
+    'level',
+    'active',
+];
+
+    protected $casts = [
+    'active' => 'boolean',
+];
 }
