@@ -15,6 +15,8 @@ class LessonController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Lesson::class);
+
         $lessons = Lesson::with('course.instructor')
                          ->orderBy('course_id')
                          ->orderBy('order')
@@ -28,6 +30,8 @@ class LessonController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Lesson::class);
+
         $courses = Course::with('instructor')->get();
 
         return view('admin.lessons.create', compact('courses'));
@@ -38,6 +42,8 @@ class LessonController extends Controller
      */
     public function store(StoreLessonRequest $request)
     {
+        $this->authorize('create', Lesson::class);
+
         $validated = $request->validated();
 
         Lesson::create($validated);
@@ -54,6 +60,8 @@ class LessonController extends Controller
         $lesson = Lesson::with('course.instructor', 'assignments')
                         ->findOrFail($id);
 
+        $this->authorize('view', $lesson);
+
         return view('admin.lessons.show', compact('lesson'));
     }
 
@@ -62,7 +70,10 @@ class LessonController extends Controller
      */
     public function edit(string $id)
     {
-        $lesson  = Lesson::findOrFail($id);
+        $lesson = Lesson::findOrFail($id);
+
+        $this->authorize('update', $lesson);
+
         $courses = Course::with('instructor')->get();
 
         return view('admin.lessons.edit', compact('lesson', 'courses'));
@@ -74,6 +85,8 @@ class LessonController extends Controller
     public function update(UpdateLessonRequest $request, string $id)
     {
         $lesson = Lesson::findOrFail($id);
+
+        $this->authorize('update', $lesson);
 
         $validated = $request->validated();
 
@@ -89,6 +102,9 @@ class LessonController extends Controller
     public function destroy(string $id)
     {
         $lesson = Lesson::findOrFail($id);
+
+        $this->authorize('delete', $lesson);
+
         $lesson->delete();
 
         return redirect()->route('admin.lessons.index')

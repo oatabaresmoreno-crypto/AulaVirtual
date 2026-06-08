@@ -16,6 +16,8 @@ class CourseController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Course::class);
+
         $courses = Course::with('instructor')
                          ->withCount('lessons', 'enrollments')
                          ->latest()
@@ -29,6 +31,8 @@ class CourseController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Course::class);
+
         $instructors = User::where('role', 'instructor')->get();
 
         return view('admin.courses.create', compact('instructors'));
@@ -39,6 +43,8 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
+        $this->authorize('create', Course::class);
+
         $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -61,6 +67,8 @@ class CourseController extends Controller
         $course = Course::with('instructor', 'lessons', 'enrollments.student')
                         ->findOrFail($id);
 
+        $this->authorize('view', $course);
+
         return view('admin.courses.show', compact('course'));
     }
 
@@ -69,7 +77,10 @@ class CourseController extends Controller
      */
     public function edit(string $id)
     {
-        $course      = Course::findOrFail($id);
+        $course = Course::findOrFail($id);
+
+        $this->authorize('update', $course);
+
         $instructors = User::where('role', 'instructor')->get();
 
         return view('admin.courses.edit', compact('course', 'instructors'));
@@ -81,6 +92,8 @@ class CourseController extends Controller
     public function update(UpdateCourseRequest $request, string $id)
     {
         $course = Course::findOrFail($id);
+
+        $this->authorize('update', $course);
 
         $validated = $request->validated();
 
@@ -102,6 +115,9 @@ class CourseController extends Controller
     public function destroy(string $id)
     {
         $course = Course::findOrFail($id);
+
+        $this->authorize('delete', $course);
+
         $course->delete();
 
         return redirect()->route('admin.courses.index')

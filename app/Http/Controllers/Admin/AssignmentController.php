@@ -15,6 +15,8 @@ class AssignmentController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Assignment::class);
+
         $assignments = Assignment::with('lesson.course.instructor')
                                  ->latest()
                                  ->get();
@@ -27,6 +29,8 @@ class AssignmentController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Assignment::class);
+
         $lessons = Lesson::with('course')->get();
 
         return view('admin.assignments.create', compact('lessons'));
@@ -37,6 +41,8 @@ class AssignmentController extends Controller
      */
     public function store(StoreAssignmentRequest $request)
     {
+        $this->authorize('create', Assignment::class);
+
         $validated = $request->validated();
 
         Assignment::create($validated);
@@ -53,6 +59,8 @@ class AssignmentController extends Controller
         $assignment = Assignment::with('lesson.course.instructor')
                                 ->findOrFail($id);
 
+        $this->authorize('view', $assignment);
+
         return view('admin.assignments.show', compact('assignment'));
     }
 
@@ -62,7 +70,10 @@ class AssignmentController extends Controller
     public function edit(string $id)
     {
         $assignment = Assignment::findOrFail($id);
-        $lessons    = Lesson::with('course')->get();
+
+        $this->authorize('update', $assignment);
+
+        $lessons = Lesson::with('course')->get();
 
         return view('admin.assignments.edit', compact('assignment', 'lessons'));
     }
@@ -73,6 +84,8 @@ class AssignmentController extends Controller
     public function update(UpdateAssignmentRequest $request, string $id)
     {
         $assignment = Assignment::findOrFail($id);
+
+        $this->authorize('update', $assignment);
 
         $validated = $request->validated();
 
@@ -88,6 +101,9 @@ class AssignmentController extends Controller
     public function destroy(string $id)
     {
         $assignment = Assignment::findOrFail($id);
+
+        $this->authorize('delete', $assignment);
+
         $assignment->delete();
 
         return redirect()->route('admin.assignments.index')

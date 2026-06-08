@@ -16,6 +16,8 @@ class EnrollmentController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Enrollment::class);
+
         $enrollments = Enrollment::with('course', 'student')
                                  ->latest()
                                  ->get();
@@ -28,6 +30,8 @@ class EnrollmentController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Enrollment::class);
+
         $courses  = Course::where('active', true)->get();
         $students = User::where('role', 'student')->get();
 
@@ -39,9 +43,10 @@ class EnrollmentController extends Controller
      */
     public function store(StoreEnrollmentRequest $request)
     {
+        $this->authorize('create', Enrollment::class);
+
         $validated = $request->validated();
 
-        // Evita inscripciones duplicadas
         $exists = Enrollment::where('course_id', $validated['course_id'])
                             ->where('student_id', $validated['student_id'])
                             ->exists();
@@ -66,6 +71,8 @@ class EnrollmentController extends Controller
         $enrollment = Enrollment::with('course', 'student')
                                 ->findOrFail($id);
 
+        $this->authorize('view', $enrollment);
+
         return view('admin.enrollments.show', compact('enrollment'));
     }
 
@@ -75,8 +82,11 @@ class EnrollmentController extends Controller
     public function edit(string $id)
     {
         $enrollment = Enrollment::findOrFail($id);
-        $courses    = Course::where('active', true)->get();
-        $students   = User::where('role', 'student')->get();
+
+        $this->authorize('update', $enrollment);
+
+        $courses  = Course::where('active', true)->get();
+        $students = User::where('role', 'student')->get();
 
         return view('admin.enrollments.edit', compact('enrollment', 'courses', 'students'));
     }
@@ -88,9 +98,10 @@ class EnrollmentController extends Controller
     {
         $enrollment = Enrollment::findOrFail($id);
 
+        $this->authorize('update', $enrollment);
+
         $validated = $request->validated();
 
-        // Si el status cambia a completado, registrar la fecha
         if ($validated['status'] === 'completed' && !$enrollment->completed_at) {
             $validated['completed_at'] = now();
         }
@@ -107,6 +118,9 @@ class EnrollmentController extends Controller
     public function destroy(string $id)
     {
         $enrollment = Enrollment::findOrFail($id);
+
+        $this->authorize('delete', $enrollment);
+
         $enrollment->delete();
 
         return redirect()->route('admin.enrollments.index')
