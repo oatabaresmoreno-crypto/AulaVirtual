@@ -13,6 +13,9 @@ class EnrollmentController extends Controller
      */
     public function index()
     {
+
+        $this->authorize('viewAny', Enrollment::class);
+
         $enrollments = Enrollment::where('student_id', auth()->id())
                                  ->with('course.instructor')
                                  ->latest()
@@ -30,6 +33,8 @@ class EnrollmentController extends Controller
                                 ->with('course.lessons.assignments')
                                 ->findOrFail($id);
 
+        $this->authorize('view', $enrollment);
+
         return view('student.enrollments.show', compact('enrollment'));
     }
 
@@ -38,6 +43,9 @@ class EnrollmentController extends Controller
      */
     public function store(StoreEnrollmentRequest $request)
     {
+
+        $this->authorize('create', Enrollment::class);
+
         $validated = $request->validated();
 
         $exists = Enrollment::where('student_id', auth()->id())
@@ -65,12 +73,14 @@ class EnrollmentController extends Controller
     public function destroy(string $id)
     {
         $enrollment = Enrollment::where('student_id', auth()->id())
-                                ->findOrFail($id);
+                            ->findOrFail($id);
+
+        $this->authorize('delete', $enrollment);
 
         $enrollment->update(['status' => 'cancelled']);
         $enrollment->delete();
 
         return redirect()->route('student.enrollments.index')
-                         ->with('success', 'Inscripción cancelada correctamente.');
+                     ->with('success', 'Inscripción cancelada correctamente.');
     }
 }
