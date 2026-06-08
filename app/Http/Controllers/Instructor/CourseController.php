@@ -15,6 +15,8 @@ class CourseController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Course::class);
+
         $courses = Course::where('instructor_id', auth()->id())
                          ->withCount('lessons', 'enrollments')
                          ->latest()
@@ -28,6 +30,8 @@ class CourseController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Course::class);
+
         return view('instructor.courses.create');
     }
 
@@ -36,6 +40,8 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
+        $this->authorize('create', Course::class);
+
         $validated = $request->validated();
 
         $validated['instructor_id'] = auth()->id();
@@ -60,6 +66,8 @@ class CourseController extends Controller
                         ->with('lessons', 'enrollments.student')
                         ->findOrFail($id);
 
+        $this->authorize('view', $course);
+
         return view('instructor.courses.show', compact('course'));
     }
 
@@ -71,6 +79,8 @@ class CourseController extends Controller
         $course = Course::where('instructor_id', auth()->id())
                         ->findOrFail($id);
 
+        $this->authorize('update', $course);
+
         return view('instructor.courses.edit', compact('course'));
     }
 
@@ -81,6 +91,8 @@ class CourseController extends Controller
     {
         $course = Course::where('instructor_id', auth()->id())
                         ->findOrFail($id);
+
+        $this->authorize('update', $course);
 
         $validated = $request->validated();
 
@@ -103,6 +115,8 @@ class CourseController extends Controller
     {
         $course = Course::where('instructor_id', auth()->id())
                         ->findOrFail($id);
+
+        $this->authorize('delete', $course);
 
         $course->delete();
 

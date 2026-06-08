@@ -15,6 +15,8 @@ class LessonController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Lesson::class);
+
         $lessons = Lesson::whereHas('course', function ($query) {
             $query->where('instructor_id', auth()->id());
         })->with('course')->orderBy('order')->get();
@@ -27,6 +29,8 @@ class LessonController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Lesson::class);
+
         $courses = Course::where('instructor_id', auth()->id())->get();
 
         return view('instructor.lessons.create', compact('courses'));
@@ -37,6 +41,8 @@ class LessonController extends Controller
      */
     public function store(StoreLessonRequest $request)
     {
+        $this->authorize('create', Lesson::class);
+
         $validated = $request->validated();
 
         Lesson::create($validated);
@@ -54,6 +60,8 @@ class LessonController extends Controller
             $query->where('instructor_id', auth()->id());
         })->with('course', 'assignments')->findOrFail($id);
 
+        $this->authorize('view', $lesson);
+
         return view('instructor.lessons.show', compact('lesson'));
     }
 
@@ -65,6 +73,8 @@ class LessonController extends Controller
         $lesson = Lesson::whereHas('course', function ($query) {
             $query->where('instructor_id', auth()->id());
         })->findOrFail($id);
+
+        $this->authorize('update', $lesson);
 
         $courses = Course::where('instructor_id', auth()->id())->get();
 
@@ -79,6 +89,8 @@ class LessonController extends Controller
         $lesson = Lesson::whereHas('course', function ($query) {
             $query->where('instructor_id', auth()->id());
         })->findOrFail($id);
+
+        $this->authorize('update', $lesson);
 
         $validated = $request->validated();
 
@@ -96,6 +108,8 @@ class LessonController extends Controller
         $lesson = Lesson::whereHas('course', function ($query) {
             $query->where('instructor_id', auth()->id());
         })->findOrFail($id);
+
+        $this->authorize('delete', $lesson);
 
         $lesson->delete();
 
