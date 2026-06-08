@@ -21,16 +21,15 @@ class StoreCourseRequest extends FormRequest
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
-        return [
-            'instructor_id' => 'required|exists:users,id',
-            'title'         => 'required|string|max:200',
-            'description'   => 'nullable|string',
-            'cover_image'   => 'nullable|image|max:2048',
-            'level'         => 'required|in:beginner,intermediate,advanced',
-            'active'        => 'boolean',
-        ];
-    }
+{
+    return [
+        'title'       => 'required|string|max:200',
+        'description' => 'nullable|string',
+        'cover_image' => 'nullable|image|max:2048',
+        'level'       => 'required|in:beginner,intermediate,advanced',
+        'active'      => 'boolean',
+    ];
+}
 
     /**
      * Get the error messages for the defined validation rules.

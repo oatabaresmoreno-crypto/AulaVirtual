@@ -13,13 +13,11 @@ class StoreEnrollmentRequest extends FormRequest
     }
 
     public function rules(): array
-    {
-        return [
-            'course_id'  => 'required|exists:courses,id',
-            'student_id' => 'required|exists:users,id',
-            'status'     => 'required|in:active,completed,cancelled',
-        ];
-    }
+{
+    return [
+        'course_id' => 'required|exists:courses,id',
+    ];
+}
 
     public function messages(): array
     {
