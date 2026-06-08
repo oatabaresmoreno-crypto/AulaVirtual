@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -29,7 +28,7 @@ class CourseController extends Controller
     public function show(string $id)
     {
         $course = Course::where('active', true)
-                        ->with('instructor', 'lessons' , 'enrollments')
+                        ->with('instructor', 'lessons', 'enrollments')
                         ->findOrFail($id);
 
         $isEnrolled = $course->enrollments

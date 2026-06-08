@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreEnrollmentRequest;
 use App\Models\Enrollment;
-use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
@@ -36,14 +36,12 @@ class EnrollmentController extends Controller
     /**
      * Inscribe al estudiante en un curso.
      */
-    public function store(Request $request)
+    public function store(StoreEnrollmentRequest $request)
     {
-        $request->validate([
-            'course_id' => 'required|exists:courses,id',
-        ]);
+        $validated = $request->validated();
 
         $exists = Enrollment::where('student_id', auth()->id())
-                            ->where('course_id', $request->course_id)
+                            ->where('course_id', $validated['course_id'])
                             ->exists();
 
         if ($exists) {
@@ -52,7 +50,7 @@ class EnrollmentController extends Controller
 
         Enrollment::create([
             'student_id'  => auth()->id(),
-            'course_id'   => $request->course_id,
+            'course_id'   => $validated['course_id'],
             'status'      => 'active',
             'enrolled_at' => now(),
         ]);
