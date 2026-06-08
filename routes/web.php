@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // — Admin —
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::resource('courses', AdminCourseController::class);
     Route::resource('lessons', AdminLessonController::class);
     Route::resource('assignments', AdminAssignmentController::class);
@@ -35,14 +35,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 });
 
 // — Instructor —
-Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'verified', 'role:instructor'])->group(function () {
     Route::resource('courses', InstructorCourseController::class);
     Route::resource('lessons', InstructorLessonController::class);
     Route::resource('assignments', InstructorAssignmentController::class);
 });
 
 // — Student —
-Route::prefix('student')->name('student.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('student')->name('student.')->middleware(['auth', 'verified', 'role:student'])->group(function () {
     Route::resource('courses', StudentCourseController::class)->only(['index', 'show']);
     Route::resource('enrollments', StudentEnrollmentController::class)->only(['index', 'show', 'store', 'destroy']);
 });
