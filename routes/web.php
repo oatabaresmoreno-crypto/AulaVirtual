@@ -44,7 +44,7 @@ Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'verified'
 // — Student —
 Route::prefix('student')->name('student.')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('courses', StudentCourseController::class)->only(['index', 'show']);
-    Route::resource('enrollments', StudentEnrollmentController::class)->only(['store', 'destroy']);
+    Route::resource('enrollments', StudentEnrollmentController::class)->only(['index', 'show', 'store', 'destroy']);
 });
 
 require __DIR__.'/auth.php';
