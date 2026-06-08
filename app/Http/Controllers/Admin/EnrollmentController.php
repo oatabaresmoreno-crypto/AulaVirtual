@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreEnrollmentRequest;
+use App\Http\Requests\UpdateEnrollmentRequest;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
@@ -36,13 +37,9 @@ class EnrollmentController extends Controller
     /**
      * Guarda la nueva inscripción en la base de datos.
      */
-    public function store(Request $request)
+    public function store(StoreEnrollmentRequest $request)
     {
-        $validated = $request->validate([
-            'course_id'  => 'required|exists:courses,id',
-            'student_id' => 'required|exists:users,id',
-            'status'     => 'required|in:active,completed,cancelled',
-        ]);
+        $validated = $request->validated();
 
         // Evita inscripciones duplicadas
         $exists = Enrollment::where('course_id', $validated['course_id'])
@@ -87,16 +84,11 @@ class EnrollmentController extends Controller
     /**
      * Actualiza la inscripción en la base de datos.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateEnrollmentRequest $request, string $id)
     {
         $enrollment = Enrollment::findOrFail($id);
 
-        $validated = $request->validate([
-            'course_id'   => 'required|exists:courses,id',
-            'student_id'  => 'required|exists:users,id',
-            'status'      => 'required|in:active,completed,cancelled',
-            'completed_at'=> 'nullable|date',
-        ]);
+        $validated = $request->validated();
 
         // Si el status cambia a completado, registrar la fecha
         if ($validated['status'] === 'completed' && !$enrollment->completed_at) {
