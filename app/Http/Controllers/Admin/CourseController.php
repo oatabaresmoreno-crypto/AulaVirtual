@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCourseRequest;
+use App\Http\Requests\UpdateCourseRequest;
 use App\Models\Course;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CourseController extends Controller
@@ -36,16 +37,9 @@ class CourseController extends Controller
     /**
      * Guarda el nuevo curso en la base de datos.
      */
-    public function store(Request $request)
+    public function store(StoreCourseRequest $request)
     {
-        $validated = $request->validate([
-            'instructor_id' => 'required|exists:users,id',
-            'title'         => 'required|string|max:200',
-            'description'   => 'nullable|string',
-            'cover_image'   => 'nullable|image|max:2048',
-            'level'         => 'required|in:beginner,intermediate,advanced',
-            'active'        => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['title']);
 
@@ -84,18 +78,11 @@ class CourseController extends Controller
     /**
      * Actualiza el curso en la base de datos.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateCourseRequest $request, string $id)
     {
         $course = Course::findOrFail($id);
 
-        $validated = $request->validate([
-            'instructor_id' => 'required|exists:users,id',
-            'title'         => 'required|string|max:200',
-            'description'   => 'nullable|string',
-            'cover_image'   => 'nullable|image|max:2048',
-            'level'         => 'required|in:beginner,intermediate,advanced',
-            'active'        => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['title']);
 

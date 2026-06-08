@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreLessonRequest;
+use App\Http\Requests\UpdateLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
-use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
@@ -35,16 +36,9 @@ class LessonController extends Controller
     /**
      * Guarda la nueva lección en la base de datos.
      */
-    public function store(Request $request)
+    public function store(StoreLessonRequest $request)
     {
-        $validated = $request->validate([
-            'course_id'        => 'required|exists:courses,id',
-            'title'            => 'required|string|max:200',
-            'content'          => 'nullable|string',
-            'order'            => 'required|integer|min:0',
-            'duration_minutes' => 'required|integer|min:0',
-            'active'           => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         Lesson::create($validated);
 
@@ -77,18 +71,11 @@ class LessonController extends Controller
     /**
      * Actualiza la lección en la base de datos.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateLessonRequest $request, string $id)
     {
         $lesson = Lesson::findOrFail($id);
 
-        $validated = $request->validate([
-            'course_id'        => 'required|exists:courses,id',
-            'title'            => 'required|string|max:200',
-            'content'          => 'nullable|string',
-            'order'            => 'required|integer|min:0',
-            'duration_minutes' => 'required|integer|min:0',
-            'active'           => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         $lesson->update($validated);
 

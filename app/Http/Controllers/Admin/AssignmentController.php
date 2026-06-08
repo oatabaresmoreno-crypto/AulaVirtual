@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAssignmentRequest;
+use App\Http\Requests\UpdateAssignmentRequest;
 use App\Models\Assignment;
 use App\Models\Lesson;
-use Illuminate\Http\Request;
 
 class AssignmentController extends Controller
 {
@@ -34,16 +35,9 @@ class AssignmentController extends Controller
     /**
      * Guarda la nueva asignación en la base de datos.
      */
-    public function store(Request $request)
+    public function store(StoreAssignmentRequest $request)
     {
-        $validated = $request->validate([
-            'lesson_id'   => 'required|exists:lessons,id',
-            'title'       => 'required|string|max:200',
-            'description' => 'nullable|string',
-            'due_date'    => 'nullable|date|after:today',
-            'max_score'   => 'required|integer|min:1|max:1000',
-            'active'      => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         Assignment::create($validated);
 
@@ -76,18 +70,11 @@ class AssignmentController extends Controller
     /**
      * Actualiza la asignación en la base de datos.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateAssignmentRequest $request, string $id)
     {
         $assignment = Assignment::findOrFail($id);
 
-        $validated = $request->validate([
-            'lesson_id'   => 'required|exists:lessons,id',
-            'title'       => 'required|string|max:200',
-            'description' => 'nullable|string',
-            'due_date'    => 'nullable|date|after:today',
-            'max_score'   => 'required|integer|min:1|max:1000',
-            'active'      => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         $assignment->update($validated);
 
