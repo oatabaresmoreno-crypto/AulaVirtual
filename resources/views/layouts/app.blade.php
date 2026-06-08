@@ -1,36 +1,107 @@
+{{-- resources/views/layouts/app.blade.php --}}
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Aula Virtual')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50 text-gray-900">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    {{-- Navbar --}}
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+            {{-- Logo --}}
+            <a href="{{ route('dashboard') }}"
+               class="text-xl font-bold text-indigo-600">
+                Aula Virtual
+            </a>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.navigation')
+            {{-- Links de navegación --}}
+            <div class="flex items-center gap-6 text-sm">
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+                @auth
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                    {{-- Admin --}}
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.courses.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Cursos</a>
+                        <a href="{{ route('admin.lessons.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Lecciones</a>
+                        <a href="{{ route('admin.assignments.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Asignaciones</a>
+                        <a href="{{ route('admin.enrollments.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Inscripciones</a>
+                    @endif
+
+                    {{-- Instructor --}}
+                    @if(auth()->user()->role === 'instructor')
+                        <a href="{{ route('instructor.courses.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Mis Cursos</a>
+                        <a href="{{ route('instructor.lessons.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Mis Lecciones</a>
+                        <a href="{{ route('instructor.assignments.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Mis Asignaciones</a>
+                    @endif
+
+                    {{-- Student --}}
+                    @if(auth()->user()->role === 'student')
+                        <a href="{{ route('student.courses.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Cursos</a>
+                        <a href="{{ route('student.enrollments.index') }}"
+                           class="text-gray-600 hover:text-indigo-600">Mis Inscripciones</a>
+                    @endif
+
+                    {{-- Usuario autenticado --}}
+                    <span class="text-gray-400">{{ auth()->user()->name }}</span>
+
+                    {{-- Cerrar sesión --}}
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="text-gray-600 hover:text-red-500">
+                            Salir
+                        </button>
+                    </form>
+
+                @else
+                    <a href="{{ route('login') }}"
+                       class="text-gray-600 hover:text-indigo-600">Entrar</a>
+                    <a href="{{ route('register') }}"
+                       class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700">
+                        Registrarse
+                    </a>
+                @endauth
+
+            </div>
         </div>
-    </body>
+    </nav>
+
+    {{-- Mensajes flash --}}
+    @if(session('success'))
+        <div class="max-w-7xl mx-auto px-4 mt-4">
+            <div class="bg-green-50 border border-green-200 text-green-800
+                        rounded-lg px-4 py-3 text-sm">
+                {{ session('success') }}
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="max-w-7xl mx-auto px-4 mt-4">
+            <div class="bg-red-50 border border-red-200 text-red-800
+                        rounded-lg px-4 py-3 text-sm">
+                {{ session('error') }}
+            </div>
+        </div>
+    @endif
+
+    {{-- Contenido de cada página --}}
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        @yield('content')
+    </main>
+
+</body>
 </html>
