@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +20,11 @@ class EnrollmentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'course_id'    => Course::factory(),
+            'student_id'   => User::factory(),
+            'status'       => $this->faker->randomElement(['active', 'completed', 'cancelled']),
+            'enrolled_at'  => $this->faker->dateTimeBetween('-6 months', 'now'),
+            'completed_at' => null,
         ];
     }
 }
