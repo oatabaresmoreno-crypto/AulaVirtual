@@ -1,3 +1,122 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Inputs y selects oscuros */
+input, textarea, select {
+    background-color: #1c2128 !important;
+    color: #e6edf3 !important;
+    border-color: #30363d !important;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #7dc142 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(125, 193, 66, 0.2) !important;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #8b949e !important;
+}
+
+select option {
+    background-color: #1c2128;
+    color: #e6edf3;
+}
+
+/* Tarjetas y contenedores */
+.bg-white {
+    background-color: #1c2128 !important;
+    color: #e6edf3 !important;
+}
+
+.bg-gray-50 {
+    background-color: #161b22 !important;
+}
+
+.bg-gray-100 {
+    background-color: #0d1117 !important;
+}
+
+/* Textos */
+.text-gray-900 {
+    color: #e6edf3 !important;
+}
+
+.text-gray-700 {
+    color: #c9d1d9 !important;
+}
+
+.text-gray-600 {
+    color: #8b949e !important;
+}
+
+.text-gray-500 {
+    color: #6e7681 !important;
+}
+
+.text-gray-400 {
+    color: #484f58 !important;
+}
+
+/* Bordes */
+.border-gray-200 {
+    border-color: #30363d !important;
+}
+
+.border-gray-300 {
+    border-color: #30363d !important;
+}
+
+/* Tablas */
+.divide-y > * + * {
+    border-color: #30363d !important;
+}
+
+/* Botones */
+.bg-indigo-600 {
+    background-color: #7dc142 !important;
+    color: #0d1117 !important;
+}
+
+.hover\:bg-indigo-700:hover {
+    background-color: #6aad2e !important;
+}
+
+.text-indigo-600 {
+    color: #7dc142 !important;
+}
+
+.hover\:text-indigo-600:hover {
+    color: #7dc142 !important;
+}
+
+/* Badges */
+.bg-green-50 {
+    background-color: #1a2e0a !important;
+}
+
+.text-green-700 {
+    color: #7dc142 !important;
+}
+
+.bg-red-50 {
+    background-color: #2d1212 !important;
+}
+
+.text-red-600 {
+    color: #f85149 !important;
+}
+
+.bg-blue-50 {
+    background-color: #0d1f3c !important;
+}
+
+.text-blue-700 {
+    color: #58a6ff !important;
+}
+
+/* Hover en filas de tabla */
+.hover\:bg-gray-50:hover {
+    background-color: #21262d !important;
+}
